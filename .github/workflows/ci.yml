@@ -97,6 +97,7 @@ jobs:
     # Error önemli bulgu işi kırmızıya çevirir; Warning'ler özette ve Code scanning sekmesinde kalır (G-07'de hepsi gözden geçirildi).
     timeout-minutes: 45
     permissions:
+      actions: read
       contents: read
       security-events: write
     steps:
