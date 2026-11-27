@@ -1,0 +1,371 @@
+﻿MULTIMIZER v10.1.0                                     ᏖᵀᎥᴮᏋᵀᏖ   S. Tibet Tuncer
+=========================================================================
+
+NEDİR?
+  Windows 10 / 11 için hızlandırma, bakım, güvenlik, ağ koruma, yedekleme, sorun giderme,
+  silinen dosya kurtarma, kalıcı silme ve şirket yönetimi aracıdır. Ana dosya Multimizer.ps1'dir; yanında veri\ ve Eklenti\ klasörleri
+  durur. Kurulum gerektirmez, istenirse uygulama içinden kalıcı olarak kurulabilir.
+  Hiçbir veri internete gönderilmez. Uzaktan kod çalıştırılmaz.
+
+NASIL ÇALIŞTIRILIR?
+  1) ZIP dosyasının TAMAMINI bir klasöre çıkarın ("Tümünü ayıkla"). ZIP'in içinden tek
+     bir dosyayı çalıştırmayın; dosyalar yan yana durmalı (aşağıdaki KLASÖR DÜZENİ).
+     İnternetten indirdiyseniz çıkarmadan önce ZIP dosyasına sağ tıklayıp Özellikler >
+     "Engellemeyi kaldır" kutusunu işaretleyin; Windows her dosya için ayrı uyarı vermez.
+  2) Baslat.bat dosyasına çift tıklayın. Yönetici izni istenir; "Evet" deyin.
+  3) Ayrı bir konsol penceresi açık kalmaz: pencere gelene kadar uygulamanın kendi açılış
+     ekranı görünür (ortalanmış marka yazısı, slogan ve ilerleme çubuğu; kayıtlı temaya
+     göre açık ya da koyu) ve pencere açılınca kapanır. Multimizer zaten
+     açıksa (tepsideyse de) ikinci açılış hemen çıkar ve mevcut pencereyi öne getirir.
+     Sorun giderirken konsolu görünür tutmak için:  Baslat.bat /gorunur
+  4) Multimizer penceresi açılır. İlk açılışta "Bu bilgisayarı nasıl kullanıyorsun?" diye
+     sorulur; seçiminize göre uygun sayfa açılır (hiçbir ayar kendiliğinden değişmez).
+  İlk kez çalıştırdıktan sonra: Ayarlar > "Kur" ile Başlat menüsü ve masaüstü kısayolu
+  oluşur; zamanlanmış bakım ve tepsi simgesi de bu şekilde etkinleşir.
+  Uygulama kurulu olmayan bir kopyadan açılınca "Multimizer bu bilgisayara kurulsun mu?" diye
+  sorar: "Kur (önerilir)" önce eksik bileşenleri (Visual C++, .NET, DirectX) denetleyip winget
+  ile kurar, sonra uygulamayı kalıcı klasöre kopyalar; "Kurmadan kullan" seçilirse bir daha
+  sorulmaz; "Daha sonra sor" ya da pencereyi kapatmak sonraki açılışta yeniden sordurur.
+
+  KLASÖR DÜZENİ (hepsi aynı yerde kalmalı):
+     Baslat.bat        başlatıcı: açılış ekranını gösterir, yönetici izni ister, açılmazsa nedenini yazar
+     Acilis.ps1        açılış ekranı ve denetçi (Baslat.bat çağırır; elle çalıştırmanız gerekmez)
+     Multimizer.ps1    uygulama
+     Tani.ps1          açılış tanılaması (yalnızca okur, hiçbir şeyi değiştirmez)
+     veri\             üretici tablosu (oui.txt), şüpheli komut kuralları ve dil dosyaları (veri\dil)
+     Eklenti\          isteğe bağlı özellikler (yalnızca kullanılınca yüklenir): silinen
+                       dosya kurtarma, disk silme, güvenli silme, BitLocker işlemleri,
+                       dosya şifreleme, parola üretimi, bellek boşaltıcı, Wi-Fi parola dışa aktarma
+     araclar\          Duman-Testi.cmd (arayüzü gerçek pencerede gezen sınama),
+                       Duman-Kullanim.cmd (Asistan, Yardımcılar ve kısa açıklamalar),
+                       Duman-Ozellik.cmd (her özelliği gerçek Windows'ta sınar; yönetici onayı ister),
+                       Duman-OzellikOku.cmd (aynısının yalnızca okuma kipi),
+                       kısa kapsamları Duman-Tepsi.cmd, Duman-Gorunum.cmd, Duman-Tasarim.cmd,
+                       Duman-Saydam.cmd ve Duman-Ust.cmd, dil denetimi için Duman-Dil.cmd,
+                       ayrıca geliştiriciler için Ozet-Guncelle.ps1
+     STANDARTLAR.md    güvenlik ayarlarının CIS / NIST / ISO 27001 / BSI / NIS2 / GDPR /
+                       KVKK başlıklarıyla eşlemesi (bilgilendirme; sertifika değildir)
+     tests\ , kaynak\  yalnızca geliştiriciler için (birim testleri; Multimizer.ps1 ve
+                       Eklenti\ dosyalarını üreten kaynak ağacı). Kullanmak için gerekmez.
+
+  ÖNERİLEN İLK ADIM (kendi kendine sınama):
+     Baslat.bat -OzTest
+  Bu komut, uygulamanın bu bilgisayarda doğru çalıştığını denetler (katalog, güvenlik
+  kapıları, VPN ve kill-switch kuralları, cihaz engelleme koruması, arayüz, kayıt defteri
+  yazma/geri alma, kurtarma ve silme motorlarının bu bilgisayarda derlenip geçici bir
+  imajda sınanması, izin listeleri...). Sistemde kalıcı değişiklik yapmaz, gerçek diske
+  yazmaz. Sonuç ekranda görünür ve
+  ProgramData\Multimizer\ozsinama.txt dosyasına yazılır.
+  İsteğe bağlı ikinci sınama: araclar\Duman-Testi.cmd. Arayüzü açar, her temada ve
+  yerleşimde bütün sayfaları gezer, tema / yerleşim düğmelerine tıklar, kaydırmayı,
+  kısayolları ve tepsiyi dener. Yönetici izni gerekmez, sistem ayarına dokunmaz; yaklaşık
+  25 dakika sürer, bitene kadar pencereye dokunmayın. Sonuç: %TEMP%\Multimizer-duman.txt
+  Kısa kapsamlar: Duman-Tepsi.cmd (tepsi; yaklaşık 1 dakika), Duman-Gorunum.cmd (temalar ve
+  sayfalar; yaklaşık 9 dakika), Duman-Dokunma.cmd (dokunma hedefleri Büyük; yaklaşık 5 dakika), Duman-Tasarim.cmd (tasarımlar ve ana ekran düzeni; yaklaşık
+  8 dakika), Duman-Saydam.cmd (Mica / Akrilik; yaklaşık 2 dakika), Duman-Ust.cmd (üst çubuk:
+  ana sayfa emblemi ve dil listesi; yaklaşık 1 dakika). Testi her seferinde yalnızca bir kez
+  başlatın; iki kopya aynı ayar dosyasını paylaşır.
+
+İKİ KİP
+  Kullanıcı kipi : Uygulama güvenli seçimleri sizin yerinize yapar; siz yalnızca
+                   "Önizle" ve "Uygula" dersiniz. Teknik sayfalar gizlidir.
+  Uzman kipi     : Hizmetler ve Şirket sayfaları ile tüm ayrıntılar açılır. (Araçlar sayfası iki
+                   kipte de vardır; Windows araçları, İşlemler, Dosya araçları ve Sistem
+                   sekmeleri yalnızca Uzman kipinde görünür.)
+  (Üst çubuğun ortasındaki Kullanıcı / Uzman düğmesi.)
+
+ÜST ÇUBUK
+  Sol üstteki Multimizer emblemi ana sayfa düğmesidir: başka bir sayfadayken tıklayınca
+  durum panosu (ana ekran) açılır; zaten oradaysa sayfa en üste kaydırılır.
+  "Sor ya da ara" düğmesi (F1) sohbet biçimli Asistan'ı açar: sorunuzu kendi sözcüklerinizle yazın
+  ("bilgisayar yavaş", "disk doldu", "parola üret"); ilgili açıklama ve tek tıkla açılan
+  işlemler gelir. Cevaplar bu bilgisayarda üretilir, yazdıklarınız hiçbir yere gönderilmez.
+  Sol çubukta kapalı bir grubun başlığı üzerinde durunca grup açılır, bir sayfa düğmesi
+  üzerinde durunca alt sekmeleri yanında menü olarak açılır; satırlardaki uzun açıklamalar
+  tek satırda kesilir, tamamı üzerine gelince ipucunda okunur (Ayarlar > Görünüm >
+  "Açıklamaları tam göster" eski görünümü geri getirir).
+  Kullanıcı / Uzman düğmesinin yanındaki dil düğmesi (küre simgesi ve dilin kısa kodu)
+  arayüz dili listesini açar; seçim aşağıdaki DİL DESTEĞİ bölümünde anlatıldığı gibi
+  uygulanır. Pencere daraldıkça önce slogan gizlenir, sonra sayfa adı kutusu daralır ve dil
+  kodu yazısı kalkar; emblem ve dil düğmesi her genişlikte çalışır.
+
+SAYFALAR
+  Durum Panosu      Canlı işlemci / bellek / disk / ağ, sağlık puanı, hızlı araçlar,
+                    işlem günlüğü.
+  Çözüm Merkezi     Bulur VE düzeltir (ayrıntı aşağıda): Sorunlar, Diskler (BitLocker ile
+                    şifreleme), Silinen dosyalar (kurtarma), Kalıcı silme, Sorun gidericiler,
+                    Bu bilgisayar, Hazırlık.
+  Optimizasyon      190'dan fazla ayar: gizlilik ve telemetri, arayüz ve kişiselleştirme,
+                    sistem, Windows özellikleri ve bileşenleri, oyun, ağ, temizlik, Edge,
+                    Office ve uygulama izinleri. Üç hazır düzey (Güvenli / Dengeli / Güçlü);
+                    zevk ve kullanım tercihleri yalnızca elle seçilir. Güçlü bilgisayarda
+                    gereksiz bir şey kapatılmaz; zayıf bilgisayarda hızlandıranlar öne
+                    çıkar. Önce ÖNİZLE.
+  Hizmet Yöneticisi 100'den fazla hizmet için bilgi tabanı. Windows'un omurgası olan
+                    hizmetler (Defender, Güvenlik Duvarı, Windows Update, RPC vb.) kilitlidir.
+  Uygulamalar       Gereksiz Mağaza uygulamaları, başlangıç programları, yüklü programlar,
+                    ücretsiz ve açık kaynak araçlar (winget).
+  Temizlik ve Disk  Akıllı temizlik: geçici dosyalar, tarayıcı ve uygulama önbellekleri,
+                    gölgelendirici (shader) ve küçük resim önbelleği, kurulum günlükleri,
+                    güncelleme ve Teslim İyileştirme önbelleği; disk analizi; en büyük 100
+                    dosya; kopya dosya bulucu. SIKIŞTIR: CompactOS ve klasör sıkıştırma
+                    (oyun / program klasörleri; dosya silinmez, geri alınabilir).
+  Güç               Dengeli / Tasarruf / Yüksek / Nihai performans; geçmeden önce neyin
+                    değişeceğini gösteren ÖNİZLEME; özel plan oluşturucu ve hazır
+                    şablonlar (Oyun, Sessiz ve serin, Pil ömrü, Ofis); canlı güç durumu,
+                    pil aşınması, pil ve enerji raporu.
+  Oyun              Canlı işlemci / bellek / ekran kartı / disk / sıcaklık; yüklü oyunlar
+                    (Steam, Epic, GOG, elle eklenen); oyun başına güçlü GPU ve tam ekran
+                    ayarı; tek tıkla OYUN KİPİ ve "Normale dön"; oyun ayarları.
+  Akıllı bakım      Yerel ve kural tabanlı (bulut yok, veri gitmez, hepsi KAPALI gelir):
+                    performans artırıcı, ısı yönetimi, bellek rahatlatma, gizlilik
+                    kalkanı, sıfır dokunuş, akıllı temizlik, OTOMASYON KURALLARI (pil,
+                    fiş, sıcaklık, bellek, oyun, gün/saat -> güç planı, temizlik, odak
+                    kipi, bildirim...), donanım sağlığı ve ömrü, mini izleyici.
+  Güvenlik          Denetim ve "Düzelt" planı, sertleştirme, güvenlik duruşu (CIS / NIST /
+                    ISO 27001 / BSI / NIS2 / GDPR / KVKK eşlemesi), hızlı işlemler; Windows 10
+                    destek takvimi, Windows 11 uyumluluğu, disk sağlığı, pil, kamera /
+                    mikrofon / konum kullanım geçmişi.
+  Güncellemeler     Windows Update ara / kur; winget ile program güncelleme ve sabitleme;
+                    DENETİM: 35 güne kadar duraklat, özellik güncellemelerini 365 güne
+                    kadar ertele, sürücüleri Windows Update'ten ayır; kurulu güncellemeleri
+                    görüp sorunluyu kaldır. Windows Update KAPATILMAZ.
+  Ağ Araçları       Cihazlar (ağınızdaki tüm cihazlar ve türleri), koruma, VPN ve gizlilik
+                    (WireGuard içe aktarma, Windows IKEv2, şifreli DNS, kill-switch,
+                    sızıntı testi), DNS, ping / yol izleme, hız testi, onarım.
+  Yedek ve Kurtarma Klasör yedeği, ŞİFRELİ ve sürümlü yedek (restic), Geri Dönüşüm Kutusu,
+                    önceki sürümler, geri yükleme noktaları, BitLocker kurtarma anahtarı,
+                    taşınma kiti. (Silinen dosyaları geri getirmek için Çözüm Merkezi.)
+  Şirket Yönetimi   Envanter ve rapor (HTML), şirket ilkeleri, zamanlanmış görevler,
+                    ayar profilini dışa / içe aktarma.
+  Araçlar           Yardımcılar (parola üretici, toplu yeniden adlandırma, karne, hangi
+                    program internete bağlanıyor, alternatif önerici, Firefox ilkeleri,
+                    yeni bilgisayar adımları, yardım paketi); Windows araçlarına kısayollar, işlem listesi, SFC / DISM, dosya özeti
+                    ve imza, güvenli silme; Dış araçlar (CrystalDiskInfo, TestDisk / PhotoRec,
+                    WinDirStat, Sysinternals, HWiNFO, WireGuard, 7-Zip, Everything, PowerToys:
+                    onayınızla winget ile kurulur, kurulu olanlar tek tıkla açılır).
+  Geçmiş ve Geri Al Uyguladığınız HER değişiklik kaydedilir; tek tıkla geri alınır.
+  Ayarlar           Görünüm (tema, yerleşim, tasarım, ana ekran biçimi, saydamlık, hazır
+                    görünümler, yakınlaştırma, kaydırma ve klavye seçenekleri), tepsi davranışı, animasyonları azaltma, kullanım
+                    türü, otomatik geri yükleme noktası, günlük süresi, internet istekleri
+                    anahtarları, haftalık bakım, profil; Uygulama kartı (güncelleme
+                    denetimi ve dosya bütünlüğü denetimi).
+
+ÇÖZÜM MERKEZİ
+  Bilgi vermekle kalmaz, bulduğunu çözer. Her işlem önce önizlenir, onayınızla çalışır,
+  günlüğe yazılır; geri alınabilenler Geçmiş sayfasından geri alınır.
+  Sorunlar           Sağlık taramasının bulguları; düzeltilebilenin yanında "Düzelt" düğmesi.
+  Diskler            Her sürücünün türü, boş alanı ve şifreleme durumu. Windows'un kendi BitLocker'ıyla
+                     şifreler: kurtarma anahtarı şifrelenen sürücünün DIŞINA yazılıp geri okunarak
+                     doğrulanır, doğrulanamazsa her şey geri alınır. Anahtarı gösterir, kaydeder,
+                     korumayı askıya alır, kilitler, şifreyi çözer. Dosya sistemi taraması ve onarımı.
+  Silinen dosyalar   Sürücü, USB bellek, SD kart, fiziksel disk ya da disk imajından silinen dosyaları
+                     geri getirir. NTFS, FAT12/16/32 ve exFAT'ta dosya adı, klasörü ve tarihiyle;
+                     ext2/3/4'te ve tanınmayan biçimlerde dosya imzalarına göre. Kaynağa hiçbir şey
+                     yazılmaz; bulunanlar BAŞKA bir sürücüye, yeni bir klasöre kaydedilir.
+  Kalıcı silme       Dosya ve klasörü, sürücünün boş alanını, ayrılmamış alanı, tek bir bölümü ya da
+                     tüm diski geri getirilemeyecek biçimde siler. Geri döndürülemez işlemlerde hedefin
+                     adını elle yazarsınız; Windows'un çalıştığı diske doğrudan yazılmaz.
+  Sorun gidericiler  Dokuz belirtiye göre adımlar (bağlantı, saat, ses, yazıcı, Windows Update,
+                     görev çubuğu, yavaşlama, dolu disk, mavi ekran).
+  Bu bilgisayar      Model, Windows, işlemci, bellek modülleri, ekran kartı, diskler, ağ, pil, TPM ve
+                     Güvenli Önyükleme. Kullanıcı kipinde sade, Uzman kipinde ayrıntılı. Bilgiler
+                     yalnızca okunur; gözlemlerin altındaki düğmeler yalnızca onayınızla çalışır.
+  Hazırlık           PowerShell, .NET, C# derleyicisi, Visual C++ çalışma zamanları, DirectX, winget,
+                     boş alan, WMI ve yan dosyaları denetler. Eksikleri YALNIZCA onayınızla ve sabit bir
+                     izin listesinden kurar. Her sürümün ilk açılışında bir kez sessizce denetler.
+  Sınırlar: SSD ve flash belleklerde denetleyici veriyi başka hücrelere taşıdığı ve TRIM silinen
+  verinin çoğunu temizlediği için hem kurtarma hem üzerine yazarak silme sınırlıdır; kesin çözüm
+  sürücüyü baştan şifrelemektir. Üzerine yazılmış, sıkıştırılmış ya da şifreli dosyalar geri gelmez.
+  Yedekler, gölge kopyalar ve dosya adı kayıtları silinmez. Silme yöntemleri hiçbir standarda
+  uygunluk iddia etmez. Yedeği olmayan bir diskte ilk denemeyi yapmayın.
+
+DİL DESTEĞİ  (Ayarlar > Dil / Language)
+  Arayüz on iki dilde sunulabilir; kaynak dil Türkçedir. Çeviriler veri\dil\<kod>.lang
+  dosyalarındadır.
+    English (en)                %100
+    Deutsch (de)                %100
+    简体中文 (zh)               %100
+    繁體中文 (zh-hant)          %100
+    日本語 (ja)                 %100
+    العربية (ar, sağdan sola)   %100
+    Français (fr)               %99
+    Español (es)                %99
+    Italiano (it)               %99
+    Português (pt)              %99
+    Русский (ru)                %99
+    한국어 (ko)                  %99
+  Çevirisi olmayan metin önce İngilizce, o da yoksa Türkçe gösterilir; hiçbir ekran boş
+  kalmaz. Çeviriler henüz ana dili konuşanlarca gözden geçirilmedi. Bu sürümle gelen yeni
+  arayüz metinleri bütün dillerde çevrilidir; kalan açık eski sayfa metinlerindedir.
+  Dil, üst çubuktaki dil düğmesinden ya da Ayarlar'dan seçilir ("Otomatik" Windows ekran
+  dilini izler); yeniden başlatmayla geçerli olur (Windows dili zaten seçilen dilse yeniden
+  başlatma istenmez, tercih yalnızca kaydedilir). Sıra: Baslat.bat -Dil <kod>  >  ortam
+  değişkeni MM_DIL  >  Ayarlar  >  Windows ekran dili. Açılış ekranı 13 dilde yazılıdır.
+  Kendi dilinizi ekleyin ya da düzeltin: %ProgramData%\Multimizer\dil\<kod>.lang dosyası,
+  aynı kodlu uygulama dosyasının yerine geçer (UTF-8; üst bilgi satırları #name, #native,
+  #tag, #rtl, #match, #coverage; sonra her satır "Türkçe metin<SEKME>çeviri"; değişken
+  parçalar {0}, {1}). MM_DIL_IZLE=1 ile açarsanız çevirisi olmayan metinler
+  %TEMP%\Multimizer-dil-eksik.txt dosyasına yazılır. araclar\Duman-Dil.cmd her dilde tüm
+  sayfaları gezip çevirisi unutulan ve ekrana sığmayan metinleri listeler.
+
+GÖRÜNÜM, KAYDIRMA VE TEPSİ  (Ayarlar > Görünüm)
+  Tema (renkler), yerleşim (yoğunluk), tasarım (kabuğun yapısı), ana ekran biçimi ve
+  saydamlık ayrı ayrı seçilir (açılır listelerle); istediğiniz birleşimi kurabilirsiniz.
+  Hiçbiri sistem ayarına dokunmaz, yalnızca pencerenin görünümünü değiştirir.
+    Temalar    : Beyaz (varsayılan: beyaz yüzeyler, koyu lacivert düğmeler, eflatun ikinci
+                 vurgu) · Koyu neon (koyu zemin, turkuaz-mor) · Koyu (grafit, mavi-eflatun) ·
+                 Krem (sıcak açık: krem zemin, kiremit, erik moru) · Yüksek karşıtlık ·
+                 Terminal (yeşil) · Buzlu cam (açık, yarı saydam cam) · Koyu cam (parlayan
+                 çerçeve) · Renk geçişi (mavi-mor-macenta geçişli zemin) · Koyu mor
+                 (kızıl-mor tonlar)
+    Yerleşimler: Ayrıntılı (simge ve yazılı menü, günlük açık) · Kompakt (dar menü, sayfaya
+                 geniş alan) · Sade (varsayılan: açılır menü grupları ve açılır kartlar, az
+                 kalabalık) · Terminal (komut satırı ve günlük hep açık)
+    Tasarımlar : Klasik (varsayılan: bugünkü görünüm) · Kartlı (büyük başlık, cam kartlar) ·
+                 Minimal (komut çubuğu ve büyük eylem kartları, gizli menü) ·
+                 Ağ konsolu (siyah zemin, ince neon çizgiler, tek aralıklı yazı) ·
+                 Gösterge paneli (daraltılabilir menü, düzenlenebilir parçalar)
+    Ana ekran  : Pano (taşıyıp boyutlandırabileceğiniz parçalar; "Düzeni aç" / "Düzeni
+                 kilitle", "+ Parça ekle", "Varsayılan düzen") ya da Klasik durum panosu;
+                 her tasarımda seçilebilir. Pano parçaları konularına göre renklenir.
+    Tasarım ayrıntıları: menü biçimi, köşeler, yazı tipi, grafik biçimi ve parça görünümü
+                 tek tek değiştirilebilir ("Tasarıma göre" = tasarımın kendi değeri).
+    Saydamlık  : arka plan efekti Kapalı (varsayılan) / Mica / Akrilik ve yüzey opaklığı
+                 %100 - %50. Efekti Windows çizer; zayıf ekran kartında Kapalı seçin.
+    Hazır görünümler: Varsayılan (beyaz ve sade) · Koyu neon · Kompakt koyu · Terminal ·
+                 Kartlı · Minimal · Ağ konsolu · Gösterge paneli
+    Yakınlaştırma: %80 - %130 (Ctrl + fare tekerleği, Ctrl + / Ctrl - , Ctrl 0)
+    Kararlılık : "Güvenli çizim" (yalnızca yazılımla çizim; uygulama art arda iki kez
+                 beklenmedik kapanırsa kendiliğinden açılır), "Ekran kartı yükünü izle",
+                 "Ayrıntılı hata günlüğü" (aşağıya bakın).
+  Sağdaki kaydırma çubuğuna gerek yoktur: fare tekerleği, dokunmatik yüzey ve dokunmatik
+  ekran sayfanın her yerinde çalışır. Klavye:
+    PageUp / PageDown     bir ekran yukarı / aşağı
+    Home / End            sayfanın başı / sonu (sayfaya bir kez tıkladıktan sonra)
+    Boşluk, Yukarı/Aşağı  aşağı / satır satır (yazı kutusunda değilken)
+    Ctrl+Home             başa dön (ayrıca aşağı inince beliren "Başa dön" düğmesi)
+    Ctrl+Tab              sonraki sayfa (Ctrl+Shift+Tab önceki)
+    Ctrl+virgül           Ayarlar          Ctrl+K  komut satırı      F5  sayfayı yenile
+    Ctrl+W                tepsiye indir    Ctrl+Q  tamamen kapat
+  Tepsi: pencereyi simge durumuna küçültünce ya da kapat (X) düğmesine / Alt+F4'e basınca
+  uygulama sağ alttaki bildirim alanına iner ve arka planda çalışmaya devam eder (süren
+  işlem, zamanlanmış bakım, otomasyon kuralları, mini izleyici). Simgeye çift tıklayınca
+  pencere geri gelir. TAMAMEN KAPATMAK için sağ üstteki güç düğmesi, Ctrl+Q ya da tepsi
+  menüsündeki "Tamamen kapat". İki davranış Ayarlar'dan ayrı ayrı kapatılabilir.
+  Görünüm yüzünden açılmama olursa (art arda çökme ya da hata fırtınası) bir sonraki açılış
+  güvenli görünümle başlar (Koyu neon tema, Ayrıntılı yerleşim, Klasik tasarım, %100,
+  saydamlık kapalı); elle uygulamak için:  Multimizer.ps1 -Cli -Gorev GorunumSifirla
+
+AYARLARI SIFIRLAMA  (Ayarlar > Sıfırlama)
+  Üç kapsam vardır: "Görünüm", "Tüm uygulama tercihleri" ve "Her şey". "Her şey",
+  Multimizer'ın Windows'ta yaptığı geri alınabilir bütün değişiklikleri yeniden eskiye
+  doğru geri alır, sonra bütün ayarları varsayılana döndürür ve uygulamayı yeniden başlatır
+  (silinen dosyalar ve kaldırılan uygulamalar geri gelmez).
+  Kapsam: "Görünüm" (tema, yerleşim, tasarım ve ayrıntıları, ana ekran biçimi, saydamlık,
+  yakınlaştırma, hareket, kaydırma, odak halkası, mini izleyici konumu) ya da "Tüm uygulama
+  tercihleri" (bunlara ek olarak dil, kullanım türü, bildirim ve tepsi davranışı, izleme,
+  günlük saklama, güvenli silme geçiş sayısı, ana ekran pano düzeni).
+  "Varsayılana sıfırla" önce ayarların kopyasını C:\ProgramData\Multimizer\AyarYedekleri
+  klasörüne yazar (en yeni 10 kopya tutulur; kopya yazılamazsa sıfırlama yapılmaz), sonra
+  yalnızca bu listedeki ayarları döndürür. Windows üzerinde yapılan değişiklikler,
+  zamanlanmış görevler, yedekleme ayarları, ağ koruması durumu, geri alma kayıtları ve
+  güncelleme adresi değişmez. Görünüm sıfırlaması hemen uygulanır; tercihlerin
+  sıfırlanması uygulamayı yeniden başlatır. "Son sıfırlamayı geri al" kopyayı geri yükler.
+  Komut satırı (uygulama kapalıyken):
+     Multimizer.ps1 -Cli -Gorev AyarSifirla -Deger Gorunum      (ya da  -Deger Tercihler)
+  Eski sürümden gelen ve görünümü varsayılandan farklı olan ayar dosyası, ilk açılışta bir
+  kez beyaz ve sade varsayılana taşınır; önceki ayarlar AyarYedekleri klasörüne kopyalanır
+  ve "Son sıfırlamayı geri al" eski görünümü getirir.
+
+AĞ VE VPN HAKKINDA
+  - Ağ taraması yalnızca kendi ağınızda ve sizin başlattığınızda yapılır.
+  - "Engelle", bu bilgisayarın güvenlik duvarında yerel kuraldır. Başka bir cihazı ağdan
+    atmak yönlendirici yönetimi gerektirir; uygulama rehber verir, saldırı yöntemi yoktur.
+  - VPN sağlayıcısı değildir. Kendi WireGuard yapılandırmanızı (resmi WireGuard istemcisi),
+    Windows'un yerleşik IKEv2 profilini ve şifreli DNS'i yönetir.
+  - Kill-switch her zaman kapatılabilir. Acil durum:
+       powershell.exe -NoProfile -ExecutionPolicy Bypass -File Multimizer.ps1 -Cli -Gorev KorumaAc
+
+KOMUT SATIRI
+  Ctrl+K ile alttaki KOMUT SATIRI açılır; yazarken otomatik tamamlama çıkar.
+  Örnekler:  durum   saglik   bakim   tara   hizmet spooler   guncelle   yedekle
+             rapor   ag   ping 8.8.8.8   dns   hiz   islemler   mod uzman   yardim
+
+ŞİRKETLER İÇİN (pencere açmadan, GPO / Intune / zamanlanmış görev)
+  powershell.exe -NoProfile -ExecutionPolicy Bypass -File Multimizer.ps1 -Cli -Gorev Bakim -Sessiz
+  Görevler:  Bakim | Rapor | Yedekle | Durum | Duzelt | Guncelle | AgBul | KorumaAc |
+             Profil -Profil C:\yol\profil.json | AkilliBakim | AkilliTemizlik | GorunumSifirla |
+             AyarSifirla -Deger Gorunum/Tercihler |
+             GucPlani -Deger Dengeli/Tasarruf/Yuksek/Nihai |
+             Sikistir -Deger "D:\Oyunlar\X"  (ya da -Deger CompactOS)
+  Çıkış kodları: 0 tamam, 1 hata, 2 kritik bulgu var (Durum), 3 başka görev çalışıyor.
+  Her görevle -DebugLog verilebilir (yutulan hatalar da ayrinti-GÜN.txt dosyasına yazılır).
+  Günlükler: C:\ProgramData\Multimizer\Kayitlar   Raporlar: ...\Raporlar
+  Önerilen düzen: bir referans bilgisayarda ayarları yapın > Şirket Yönetimi > profili
+  dışa aktarın > diğer bilgisayarlarda -Gorev Profil ile uygulayın.
+  Şifreli (restic) yedek parola gerektirdiği için zamanlanmış çalışmada atlanır.
+
+GÜVENLİK İLKELERİ
+  1. Önce göster: ÖNİZLE hiçbir şeyi değiştirmeden tüm değişiklikleri listeler.
+  2. Geri alınabilir: her değişiklik önce yedek günlüğüne yazılır (Geçmiş sayfası).
+  3. Dokunulmaz: Windows Defender, Güvenlik Duvarı, UAC, Store ve Windows Update kapatılmaz.
+     Kurcalama Koruması, SmartScreen ve Sistem Koruması'nı kapatan, kodekleri ya da
+     Windows çekirdek paketlerini kaldıran anahtarlar bilerek yoktur.
+  4. İzleme yok: hiçbir veri dışarı gönderilmez; internet yalnızca sizin istediğiniz
+     işlemlerde kullanılır (güncelleme denetimi dahil) ve Ayarlar > İnternet istekleri'nden
+     tek tek kapatılabilir.
+  5. Lisans etkinleştirme / kırma aracı değildir ve içermez.
+  6. Geri döndürülemeyen işlemler (üzerine yazarak silme, bölüm ve disk silme) yalnızca elle
+     yazdığınız hedef adıyla başlar; hedef işlem anında yeniden doğrulanır.
+  7. Dışarıdan kurulan her şey sabit bir izin listesindendir ve yalnızca onayınızla kurulur.
+  8. Standart eşlemesi (CIS, NIST, ISO 27001, BSI, NIS2, GDPR, KVKK) bilgilendirmedir;
+     sertifika ya da uygunluk beyanı değildir.
+  Silinen geçici dosyalar, kaldırılan uygulamalar/güncellemeler ve Kalıcı silme ile silinenler
+  geri gelmez; bu işlemler onay kutusunda ayrıca belirtilir. Şifreli yedeğin parolasını ya da
+  BitLocker kurtarma anahtarını kaybederseniz verilere erişilemez.
+
+GÜNCELLEME VE DOSYA BÜTÜNLÜĞÜ
+  Uygulama kendiliğinden hiçbir adrese bağlanmaz. Ayarlar > Uygulama > "Güncellemeleri denetle"ye
+  basınca, verdiğiniz HTTPS adresinden yalnızca sürüm numarası, indirme adresi ve SHA-256 özeti
+  okunur; hiçbir veriniz gönderilmez. İndirme ayrıca onayınızla yapılır, özet tutmazsa dosya silinir
+  ve indirilen dosya AÇILMAZ ve ÇALIŞTIRILMAZ. SHA-256 dosyanın bozulmadığını gösterir; yayıncının
+  kimliğini kanıtlamaz. "Dosya bütünlüğünü denetle" yan dosyaları kayıtlı özetlerle karşılaştırır.
+
+ANTİVİRÜS (WINDOWS GÜVENLİĞİ) ENGELLERSE
+  Bu araç hizmetleri, kayıt defterini ve güvenlik duvarını yönettiği için büyük ve imzasız
+  bir betiktir; bazı güvenlik yazılımları bunu yanlışlıkla zararlı sayabilir. Windows
+  Defender'ın engeli şu iletiyle görünür: "Bu betik zararlı içerik içeriyor ve antivirüs
+  yazılımınız tarafından engellendi". Bunun yönetici izniyle ilgisi yoktur.
+  Baslat.bat böyle bir durumda tanılamayı kendisi çalıştırır (Tani.ps1): Defender'ın verdiği
+  tehdit adını gösterir, raporu panoya kopyalar ve %TEMP%\Multimizer-Tani.txt dosyasına yazar.
+  İstediğiniz zaman elle çalıştırmak için:   Baslat.bat /tani
+  Yapabilecekleriniz (Defender'ı ya da güvenlik duvarını KAPATMAYIN):
+     1) Windows Güvenliği > Virüs ve tehdit koruması > Koruma geçmişi: kaydı açın,
+        Eylemler > "Cihazda izin ver". (Betik düz metindir; isterseniz önce okuyabilirsiniz.)
+     2) Yanlış tespiti Microsoft'a bildirin: https://www.microsoft.com/wdsi/filesubmission
+     3) Geçici çözüm olarak yalnızca bu klasörü dışlamaya ekleyin (Virüs ve tehdit koruması >
+        Ayarları yönet > Dışlamalar > Klasör).
+  Eklenti\ ve veri\ dosyalarının SHA-256 özetleri Multimizer.ps1 içinde kayıtlıdır; değişmiş
+  ya da eksik bir dosya yüklenmez. Bir eklenti engellenirse yalnızca o özellik çalışmaz.
+  (Kurtarma ve disk silme eklentileri ham disk erişimi yaptığı için bazı güvenlik yazılımlarının
+  dikkatini çekebilir.)
+
+SORUN OLURSA
+  - Ayrıntılı hata günlüğü: Baslat.bat -DebugLog ya da Ayarlar > Görünüm > Kararlılık >
+    "Ayrıntılı hata günlüğü". Uygulamanın sessizce geçiştirdiği hatalar da
+    C:\ProgramData\Multimizer\Kayitlar\ayrinti-GÜN.txt dosyasına yazılır (saat, kaynak,
+    hata türü ve kimliği, ileti, betik satırı, işlev, hatalı satır). Aynı hata dakikada bir
+    kez yazılır, dosya günde 2 MB'ta kesilir; varsayılan kapalıdır, veri dışarı gönderilmez.
+  - Açılmazsa: Baslat.bat nedenini kendisi arar ve ekrana yazar (Tani.ps1). Raporu bana
+    iletmek için panodan yapıştırabilirsiniz. Ayrıca şu klasöre bakın:
+    C:\ProgramData\Multimizer\Kayitlar  (hata-*.txt ve kayit-*.txt dosyaları)
+  - Klasör OneDrive / Masaüstü içindeyse ve sorun sürüyorsa klasörü C:\Multimizer gibi
+    yerel bir yere taşıyın.
+  - Eski "WinHizlandirici" klasörünüz varsa ilk açılışta yeni klasöre kopyalanır; eskisine dokunulmaz.
+  - PowerShell "Kısıtlı Dil Modu" (WDAC / AppLocker) açık olan bilgisayarlarda çalışmaz.
+  - Windows 10 / 11 ve Windows PowerShell 5.1 gerekir (Windows ile birlikte gelir). Eksik bir
+    bileşen varsa Çözüm Merkezi > Hazırlık denetler ve onayınızla kurar.
+  - Kaldırmak için: Ayarlar > "Kurulumu kaldır"; ardından klasörü silin.
+
+Teşekkürler!                                            ᏖᵀᎥᴮᏋᵀᏖ   S. Tibet Tuncer

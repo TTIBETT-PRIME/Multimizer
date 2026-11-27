@@ -1,0 +1,119 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  linux-tests:
+    name: Birim testleri (PowerShell 7, Linux)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Sözdizimi ve ASCII denetimi
+        shell: pwsh
+        run: |
+          $fail = $false
+          foreach ($rel in 'Multimizer.ps1', 'Tani.ps1', 'Baslat.bat', 'araclar/Ozet-Guncelle.ps1') {
+            $path = Join-Path $PWD $rel
+            if ($rel -like '*.ps1') {
+              $tokens = $null; $errors = $null
+              [void][System.Management.Automation.Language.Parser]::ParseFile($path, [ref]$tokens, [ref]$errors)
+              if ($errors.Count -gt 0) { $errors | ForEach-Object { Write-Host "$rel : $($_.Message)" }; $fail = $true }
+            }
+            $bad = [System.IO.File]::ReadAllBytes($path) | Where-Object { $_ -gt 127 }
+            if (@($bad).Count -gt 0) { Write-Host "$rel ASCII disi karakter iceriyor"; $fail = $true }
+          }
+          foreach ($f in Get-ChildItem Eklenti -Filter '*.ps1') {
+            $tokens = $null; $errors = $null
+            [void][System.Management.Automation.Language.Parser]::ParseFile($f.FullName, [ref]$tokens, [ref]$errors)
+            if ($errors.Count -gt 0) { $errors | ForEach-Object { Write-Host "$($f.Name) : $($_.Message)" }; $fail = $true }
+          }
+          if ($fail) { exit 1 }
+      - name: Yan dosya özetleri
+        shell: pwsh
+        run: pwsh -NoProfile -File araclar/Ozet-Guncelle.ps1
+      - name: Testler
+        shell: pwsh
+        env:
+          MM_BUILD: ${{ github.workspace }}/Multimizer.ps1
+          DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: '1'
+        run: |
+          $failed = @()
+          foreach ($f in Get-ChildItem tests -Filter 't_*.ps1' | Sort-Object Name) {
+            Write-Host "=== $($f.Name)"
+            pwsh -NoProfile -File $f.FullName
+            if ($LASTEXITCODE -ne 0) { $failed += $f.Name }
+          }
+          if ($failed.Count -gt 0) { Write-Error ('Basarisiz takimlar: ' + ($failed -join ', ')); exit 1 }
+      - name: Kaynaktan yeniden üretim depodakiyle bayt bayt aynı mı
+        env:
+          DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: '1'
+        run: |
+          python3 kaynak/build.py
+          git status --short
+          git diff --exit-code --stat -- Multimizer.ps1 Eklenti veri
+      - name: Statik denetimler (kaynak/check.py)
+        env:
+          DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: '1'
+        run: python3 kaynak/check.py
+
+  windows-ozsinama:
+    name: Windows PowerShell 5.1 kendi kendine sınama (bilgilendirme)
+    runs-on: windows-latest
+    # İlk çalışmalarda sonucu inceleyin; GitHub çalıştırıcısında bulunmayan bileşenler uyarı ya da hata verebilir. Kararlı olunca bu satırı kaldırın.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v7
+      - name: Kendi kendine sınama (-OzTest)
+        shell: cmd
+        run: |
+          powershell -NoProfile -ExecutionPolicy Bypass -STA -File Multimizer.ps1 -OzTest -Sessiz
+          set RC=%ERRORLEVEL%
+          if exist "%ProgramData%\Multimizer\ozsinama.txt" type "%ProgramData%\Multimizer\ozsinama.txt"
+          exit /b %RC%
+
+  windows-parse:
+    name: Windows PowerShell 5.1 ayrıştırma
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: 5.1 ile ayrıştır
+        shell: powershell
+        run: |
+          $fail = $false
+          $files = @('Multimizer.ps1', 'Tani.ps1', 'araclar/Ozet-Guncelle.ps1') + @(Get-ChildItem Eklenti -Filter '*.ps1' | ForEach-Object { 'Eklenti/' + $_.Name })
+          foreach ($rel in $files) {
+            $tokens = $null; $errors = $null
+            [void][System.Management.Automation.Language.Parser]::ParseFile((Join-Path $PWD $rel), [ref]$tokens, [ref]$errors)
+            if ($errors.Count -gt 0) { $errors | ForEach-Object { Write-Host "$rel : $($_.Message)" }; $fail = $true }
+          }
+          if ($fail) { exit 1 }
+          Write-Host ('PowerShell ' + $PSVersionTable.PSVersion + ' ile ayrıştırıldı, hata yok.')
+
+  kod-analizi:
+    name: Kod analizi (PSScriptAnalyzer + InjectionHunter)
+    runs-on: ubuntu-latest
+    # Error önemli bulgu işi kırmızıya çevirir; Warning'ler özette ve Code scanning sekmesinde kalır (G-07'de hepsi gözden geçirildi).
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v7
+      - name: Analiz modüllerini kur (PowerShell Galerisi)
+        shell: pwsh
+        run: |
+          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+          Install-Module -Name PSScriptAnalyzer -RequiredVersion 1.25.0 -Scope CurrentUser -Force
+          Install-Module -Name InjectionHunter -RequiredVersion 1.0.0 -Scope CurrentUser -Force
+      - name: Çözümle (kural kümesi PSScriptAnalyzerSettings.psd1)
+        shell: pwsh
+        run: pwsh -NoProfile -File kaynak/tools/kod_analizi.ps1 -Kok . -Sarif psa.sarif -Ozet $env:GITHUB_STEP_SUMMARY
+      - name: Sonuçları Code scanning sekmesine yükle
+        if: always() && hashFiles('psa.sarif') != ''
+        continue-on-error: true
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: psa.sarif
+          category: psscriptanalyzer

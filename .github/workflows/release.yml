@@ -1,0 +1,55 @@
+name: Sürüm
+
+# Bir sürüm etiketi (v10.1.0 gibi) gönderildiğinde çalışır:
+#   1) kaynaktan yeniden üretimin depodaki dosyalarla bayt bayt aynı olduğunu doğrular,
+#   2) paketi ve SHA-256 özet listesini üretir,
+#   3) ikisi için imzalı kaynak kanıtı (GitHub Artifact Attestations, Sigstore) oluşturur,
+#   4) sürümü yayımlar.
+# İndiren kişi paketi şöyle doğrular:  gh attestation verify Multimizer-<sürüm>.zip --repo <sahip>/<depo>
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+jobs:
+  surum:
+    name: Paketle, özetle, imzala, yayımla
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Kaynaktan yeniden üretim depodakiyle bayt bayt aynı mı
+        env:
+          DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: '1'
+        run: |
+          python3 kaynak/build.py
+          git status --short
+          git diff --exit-code --stat -- Multimizer.ps1 Eklenti veri
+      - name: Etiket ile betikteki sürüm aynı mı
+        run: |
+          surum="${GITHUB_REF_NAME#v}"
+          grep -q "AppVersion = '${surum}'" Multimizer.ps1 || { echo "Etiket ${GITHUB_REF_NAME}, betikteki sürümle uyuşmuyor"; exit 1; }
+      - name: Paket ve özet listesi
+        run: |
+          ad="Multimizer-${GITHUB_REF_NAME#v}"
+          git archive --format=zip --prefix=Multimizer/ -o "${ad}.zip" "${GITHUB_SHA}"
+          sha256sum "${ad}.zip" Multimizer.ps1 Baslat.bat Acilis.ps1 Tani.ps1 Eklenti/*.ps1 > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+      - name: İmzalı kaynak kanıtı
+        uses: actions/attest-build-provenance@v4
+        with:
+          subject-path: |
+            Multimizer-*.zip
+            SHA256SUMS.txt
+      - name: Sürümü yayımla
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" Multimizer-*.zip SHA256SUMS.txt \
+            --title "Multimizer ${GITHUB_REF_NAME#v}" \
+            --notes "Değişiklikler: CHANGELOG.md. Paket, bu deponun ${GITHUB_SHA} işlemesinden GitHub Actions ile üretildi; Multimizer.ps1, Eklenti/ ve veri/ dosyaları kaynaktan yeniden üretilip bayt bayt karşılaştırıldı. Doğrulama: gh attestation verify Multimizer-${GITHUB_REF_NAME#v}.zip --repo ${GITHUB_REPOSITORY}  (ya da SHA256SUMS.txt ile Get-FileHash çıktısını karşılaştırın)."

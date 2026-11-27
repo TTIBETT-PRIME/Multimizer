@@ -1,0 +1,21 @@
+# Multimizer: zamanlanmis gorevlerde aranan supheli komut kaliplari
+# Her satir bir duzenli ifadedir (buyuk/kucuk harf fark etmez). "#" ile baslayan satirlar yorumdur.
+# Bu dosya yalnizca OKUNUR: eslesen gorev silinmez ya da degistirilmez, "Supheli" olarak listelenir.
+# Kendi kuralinizi ekleyebilirsiniz; ancak Multimizer her kuralin ozetini kendi icinde tuttugu icin
+# dosyayi degistirirseniz ozel kurallar devreye girmez, yerine kisitli yedek kural kullanilir.
+# Kodlanmis PowerShell komutu
+-enc(odedcommand)?\b
+FromBase64String
+# Internetten indirip calistirma
+DownloadString
+DownloadFile
+Invoke-Expression
+\biex\b
+certutil.*-urlcache
+bitsadmin.*/transfer
+# Betik calistirmak icin kotuye kullanilan Windows araclari
+mshta
+regsvr32.*/i:http
+rundll32.*javascript
+# Gizli pencere + profil yuklemeden calistirma
+-w(indowstyle)?\s+hidden.*-nop
